@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Let it burn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#efe9f7; --bg2:#e1d6f2; --ink:#2a2150; --muted:#5d5486;
+  --paper:#f7ecd6; --paper-ink:#3b2a1a; --ember:#ff7a2f; --btn:#2a2150; --btn-ink:#fff4e0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#14112b; --bg2:#241a4a; --ink:#f3ead6; --muted:#b4a9d8;
+    --paper:#f1e3c6; --paper-ink:#3b2a1a; --btn:#ff8a3d; --btn-ink:#2a1208;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#14112b; --bg2:#241a4a; --ink:#f3ead6; --muted:#b4a9d8;
+  --paper:#f1e3c6; --paper-ink:#3b2a1a; --btn:#ff8a3d; --btn-ink:#2a1208;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; min-height:100vh; background:radial-gradient(120% 80% at 50% 100%,var(--bg2),var(--bg) 70%);
+  color:var(--ink); font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  display:flex; justify-content:center; overflow-x:hidden;
+}
+main{width:100%; max-width:560px; padding:28px 20px 40px; text-align:center}
+h1{font-family:"Gaegu","Comic Sans MS",cursive; font-size:clamp(2.2rem,8vw,3.2rem); line-height:1.05; margin:8px 0 10px; font-weight:700}
+.sub{margin:0 auto 22px; max-width:42ch; color:var(--muted); line-height:1.5}
+.stage{position:relative}
+.paper-wrap{position:relative; --b:0}
+.paper{
+  background:var(--paper); border-radius:6px; padding:14px 16px 10px; text-align:left;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  -webkit-mask-image:linear-gradient(to top,transparent calc(var(--b)*1%),#000 calc(var(--b)*1% + 5%));
+          mask-image:linear-gradient(to top,transparent calc(var(--b)*1%),#000 calc(var(--b)*1% + 5%));
+}
+.paper.gone{visibility:hidden}
+textarea{
+  width:100%; min-height:190px; resize:vertical; border:0; outline:0; background:transparent;
+  color:var(--paper-ink); font-family:"Gaegu","Comic Sans MS",cursive; font-size:1.55rem; line-height:1.3;
+}
+textarea::placeholder{color:#3b2a1a88}
+.paper:focus-within{outline:3px solid var(--ember); outline-offset:3px}
+.edge{
+  position:absolute; left:-4px; right:-4px; height:34px; bottom:calc(var(--b)*1% - 10px);
+  background:linear-gradient(to top,transparent,#ff4d14 30%,#ffd36b 65%,transparent);
+  filter:blur(3px); opacity:0; pointer-events:none; border-radius:50%;
+}
+.burning .edge{opacity:.95}
+.ember{
+  position:absolute; width:6px; height:6px; border-radius:50%; background:#ffb347; box-shadow:0 0 8px 2px #ff7a2f;
+  pointer-events:none; animation:rise 1.4s ease-out forwards;
+}
+@keyframes rise{to{transform:translate(var(--dx),-120px) scale(.2); opacity:0}}
+.dragon{display:block; width:min(230px,60vw); height:auto; margin:-34px auto 0; position:relative; z-index:2; overflow:visible}
+.bob{animation:bob 3s ease-in-out infinite; transform-origin:100px 230px}
+@keyframes bob{50%{transform:translateY(-4px) scaleY(1.02)}}
+#jet{transform-origin:100px 124px; transform:scaleY(0); opacity:0}
+.breathing #jet{animation:jet 3.4s ease-out forwards}
+@keyframes jet{
+  0%{transform:scaleY(0);opacity:0}
+  10%{transform:scaleY(1);opacity:1}
+  30%{transform:scaleY(.82) scaleX(1.08)}
+  50%{transform:scaleY(1) scaleX(.94)}
+  70%{transform:scaleY(.86) scaleX(1.06);opacity:1}
+  100%{transform:scaleY(.3);opacity:0}
+}
+.breathing .bob{animation:shake .25s linear infinite}
+@keyframes shake{50%{transform:translateX(2px) scale(1.03)}}
+.row{margin-top:18px; min-height:56px}
+button{
+  font:800 1.1rem "Nunito",system-ui,sans-serif; border:0; border-radius:999px; padding:14px 30px;
+  background:var(--btn); color:var(--btn-ink); cursor:pointer;
+}
+button:hover:not(:disabled){filter:brightness(1.08)}
+button:focus-visible{outline:3px solid var(--ember); outline-offset:3px}
+button:disabled{opacity:.45; cursor:not-allowed}
+.done{display:none}
+.done h2{font-family:"Gaegu","Comic Sans MS",cursive; font-size:2rem; margin:0 0 6px}
+.done p{margin:0 0 16px; color:var(--muted)}
+.finished .done{display:block}
+.finished .row-burn{display:none}
+.note{margin-top:22px; font-size:.85rem; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){
+  .bob,.breathing .bob{animation:none}
+  .breathing #jet{animation:none; opacity:1; transform:none}
+  .ember{display:none}
+}
+</style>
+</head>
+<body>
+<main id="app">
+  <h1>Let it burn</h1>
+  <p class="sub">Write down what you want to let go of. Cinder the dragon will burn it. Nothing is saved, stored, or sent anywhere.</p>
+
+  <div class="stage">
+    <div class="paper-wrap" id="wrap">
+      <div class="paper" id="paper">
+        <textarea id="txt" aria-label="What do you want to let go of?" placeholder="Type it here. A worry, a bad day, something someone said…" maxlength="2000"></textarea>
+      </div>
+      <div class="edge" id="edge"></div>
+    </div>
+
+    <svg class="dragon" viewBox="0 0 200 250" aria-hidden="true">
+      <g id="jet">
+        <path d="M100 126 C62 92 74 46 100 2 C126 46 138 92 100 126Z" fill="#ff5a1f"/>
+        <path d="M100 126 C80 102 86 72 100 36 C114 72 120 102 100 126Z" fill="#ffd36b"/>
+      </g>
+      <g class="bob">
+        <ellipse cx="42" cy="178" rx="22" ry="34" transform="rotate(-20 42 178)" fill="#4fb69a"/>
+        <ellipse cx="158" cy="178" rx="22" ry="34" transform="rotate(20 158 178)" fill="#4fb69a"/>
+        <circle cx="100" cy="176" r="62" fill="#6fd1b5"/>
+        <ellipse cx="100" cy="208" rx="34" ry="30" fill="#c8f2e3"/>
+        <path d="M66 128 L72 98 L88 120Z" fill="#ffb347"/>
+        <path d="M134 128 L128 98 L112 120Z" fill="#ffb347"/>
+        <circle cx="78" cy="156" r="11" fill="#fff"/><circle cx="122" cy="156" r="11" fill="#fff"/>
+        <circle cx="78" cy="153" r="5.5" fill="#241a4a"/><circle cx="122" cy="153" r="5.5" fill="#241a4a"/>
+        <circle cx="60" cy="176" r="7" fill="#ff9fb0" opacity=".6"/><circle cx="140" cy="176" r="7" fill="#ff9fb0" opacity=".6"/>
+        <ellipse cx="100" cy="130" rx="15" ry="9" fill="#3a1530"/>
+        <ellipse cx="86" cy="236" rx="14" ry="8" fill="#4fb69a"/><ellipse cx="114" cy="236" rx="14" ry="8" fill="#4fb69a"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="row row-burn">
+    <button id="burn" disabled>Burn it</button>
+  </div>
+
+  <div class="done" id="done" role="status" aria-live="polite">
+    <h2>It’s ash now.</h2>
+    <p>Cinder has it. Nothing was saved, and no one else saw it.</p>
+    <button id="again">Write another</button>
+  </div>
+
+  <p class="note">Burning a thought isn’t a substitute for support. If something feels too heavy to carry, talk to someone you trust.</p>
+</main>
+
+<script>
+(function(){
+  var txt=document.getElementById('txt'), burn=document.getElementById('burn'),
+      wrap=document.getElementById('wrap'), paper=document.getElementById('paper'),
+      app=document.getElementById('app'), again=document.getElementById('again'),
+      stage=document.querySelector('.stage');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var running=false;
+
+  txt.addEventListener('input',function(){ burn.disabled=!txt.value.trim(); });
+
+  function ember(b){
+    var e=document.createElement('div');
+    e.className='ember';
+    e.style.left=(Math.random()*96+2)+'%';
+    e.style.bottom='calc('+b+'% - 6px)';
+    e.style.setProperty('--dx',(Math.random()*60-30)+'px');
+    e.style.animationDuration=(1+Math.random())+'s';
+    wrap.appendChild(e);
+    e.addEventListener('animationend',function(){ e.remove(); });
+  }
+
+  function finish(){
+    paper.classList.add('gone');
+    wrap.classList.remove('burning');
+    app.classList.remove('breathing');
+    app.classList.add('finished');
+    txt.value='';
+    running=false;
+  }
+
+  burn.addEventListener('click',function(){
+    if(running||!txt.value.trim()) return;
+    running=true;
+    burn.disabled=true;
+    txt.readOnly=true;
+    app.classList.add('breathing');
+    if(reduce){ setTimeout(finish,1200); return; }
+    setTimeout(function(){
+      wrap.classList.add('burning');
+      var start=performance.now(), dur=3000, last=0;
+      (function frame(now){
+        var t=Math.min((now-start)/dur,1);
+        var b=t*t*(3-2*t)*100;
+        wrap.style.setProperty('--b',b.toFixed(2));
+        if(now-last>55){ ember(b); last=now; }
+        if(t<1){ requestAnimationFrame(frame); }
+        else { setTimeout(finish,400); }
+      })(start);
+    },700);
+  });
+
+  again.addEventListener('click',function(){
+    app.classList.remove('finished');
+    paper.classList.remove('gone');
+    wrap.style.setProperty('--b',0);
+    txt.readOnly=false;
+    txt.value='';
+    burn.disabled=true;
+    txt.focus();
+  });
+})();
+</script>
+</body>
+</html>
